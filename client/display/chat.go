@@ -55,7 +55,7 @@ func (c *Chat) Draw(s tcell.Screen) {
 }
 
 func (c *Chat) Enter() (string, bool) {
-	if len(c.Msg) > 1 {
+	if len(c.Msg) > 0 {
 		return c.Msg, true
 	}
 	return "", false
@@ -78,12 +78,12 @@ func (c *Chat) Delete() (int, int) {
 
 func (c *Chat) WriteMessage(s tcell.Screen, m string) {
 	x := c.left
+	if c.row == c.msgrow-1 {
+		c.clearChat(s)
+	}
 	for _, r := range m {
 		s.SetContent(x, c.row, r, nil, c.style)
 		x++
-		if c.row == 18 {
-			c.row = 4
-		}
 	}
 	c.row++
 }
@@ -95,4 +95,15 @@ func (c *Chat) DeleteMsg(s tcell.Screen) {
 	}
 	c.Msg = ""
 	c.msgleft = min
+}
+
+func (c *Chat) clearChat(s tcell.Screen) {
+	w, _ := s.Size()
+
+	for y := c.top + 1; y < c.msgrow; y++ {
+		for x := w; x > c.left-1; x-- {
+			s.SetContent(x, y, ' ', nil, c.style)
+		}
+	}
+	c.row = 4
 }
