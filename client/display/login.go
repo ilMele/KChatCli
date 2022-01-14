@@ -6,11 +6,6 @@ import (
 	"github.com/gdamore/tcell"
 )
 
-const (
-	inputmark = "-> "
-	usermark  = "user: "
-)
-
 type Login struct {
 	You_set bool
 	You     string

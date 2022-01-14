@@ -2,11 +2,6 @@ package display
 
 import "github.com/gdamore/tcell"
 
-const (
-	msgmark = "> "
-	youmark = "you: "
-)
-
 type Chat struct {
 	You     string
 	User    string
