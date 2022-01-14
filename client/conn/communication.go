@@ -12,7 +12,7 @@ var ser *net.UDPConn
 var err error
 
 func Init() *net.UDPConn {
-	node, err = net.ResolveUDPAddr("udp", "192.168.1.4:50002")
+	node, err = net.ResolveUDPAddr("udp", "server IP:50002")
 	if err != nil {
 		panic(err)
 	}
