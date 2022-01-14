@@ -1,6 +1,10 @@
 package display
 
-import "github.com/gdamore/tcell"
+import (
+	"strings"
+
+	"github.com/gdamore/tcell"
+)
 
 const (
 	inputmark = "-> "
@@ -57,27 +61,37 @@ func (l *Login) Draw(s tcell.Screen) {
 	l.Inputflag(s)
 }
 
-func (l *Login) Enter() (string, bool) {
+func (l *Login) Enter(s tcell.Screen) (string, bool) {
 	if !l.You_set {
+		if strings.Contains(l.You, " ") {
+			l.clearField(s)
+			return "", false
+		}
 		l.You_set = true
 		l.left = len(usermark)
+		return "", false
+	}
+	if strings.Contains(l.User, " ") {
+		l.clearField(s)
 		return "", false
 	}
 	return "", true
 }
 
-func (l *Login) Delete() (int, int) {
+func (l *Login) Delete(s tcell.Screen) {
 	if l.You_set {
 		dim := len(l.User) - 1
 		if dim > 0 {
 			l.User = l.User[:dim]
 			l.left--
-			return l.X + l.left, l.Y + 1
+			s.SetContent(l.X+l.left, l.Y+1, ' ', nil, l.Style)
+			return
 		}
 		if dim == 0 {
 			l.User = ""
 			l.left--
-			return l.X + l.left, l.Y + 1
+			s.SetContent(l.X+l.left, l.Y+1, ' ', nil, l.Style)
+			return
 		}
 	}
 
@@ -85,14 +99,15 @@ func (l *Login) Delete() (int, int) {
 	if dim > 0 {
 		l.You = l.You[:dim]
 		l.left--
-		return l.X + l.left, l.Y
+		s.SetContent(l.X+l.left, l.Y, ' ', nil, l.Style)
+		return
 	}
 	if dim == 0 {
 		l.You = ""
 		l.left--
-		return l.X + l.left, l.Y
+		s.SetContent(l.X+l.left, l.Y, ' ', nil, l.Style)
+		return
 	}
-	return -1, -1
 }
 
 func (l *Login) Inputflag(s tcell.Screen) {
@@ -112,5 +127,18 @@ func (l *Login) Inputflag(s tcell.Screen) {
 	for _, r := range inputmark {
 		s.SetContent(x, l.Y, r, nil, l.Style)
 		x++
+	}
+}
+
+func (l *Login) clearField(s tcell.Screen) {
+	if l.You_set {
+		for x := len(l.User); x > 0; x-- {
+			l.Delete(s)
+		}
+		return
+	}
+
+	for x := len(l.You); x > 0; x-- {
+		l.Delete(s)
 	}
 }

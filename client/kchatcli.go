@@ -12,8 +12,8 @@ import (
 type Idisplay interface {
 	Draw(s tcell.Screen)
 	Write(s tcell.Screen, r rune)
-	Enter() (string, bool)
-	Delete() (int, int)
+	Enter(s tcell.Screen) (string, bool)
+	Delete(s tcell.Screen)
 }
 
 func main() {
@@ -69,7 +69,7 @@ func main() {
 				quit()
 			} else if ev.Key() == tcell.KeyEnter {
 				if state == "login" {
-					if _, conf := current.Enter(); conf {
+					if _, conf := current.Enter(s); conf {
 						y, u := Dlogin.You, Dlogin.User
 						se := conn.LoginRequest(y, u)
 						if se != "" {
@@ -88,7 +88,7 @@ func main() {
 						Dlogin.Inputflag(s)
 					}
 				} else if state == "chat" {
-					text, conf := current.Enter()
+					text, conf := current.Enter(s)
 					if !conf {
 						continue
 					}
@@ -97,11 +97,7 @@ func main() {
 					Dchat.DeleteMsg(s)
 				}
 			} else if ev.Key() == tcell.KeyDEL || ev.Key() == tcell.KeyBackspace {
-				x, y := current.Delete()
-				if x == -1 {
-					continue
-				}
-				s.SetContent(x, y, ' ', nil, defStyle)
+				current.Delete(s)
 			} else {
 				current.Write(s, ev.Rune())
 			}

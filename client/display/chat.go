@@ -54,26 +54,27 @@ func (c *Chat) Draw(s tcell.Screen) {
 	s.SetContent(c.left+1, c.msgrow, rune(msgmark[1]), nil, c.style)
 }
 
-func (c *Chat) Enter() (string, bool) {
+func (c *Chat) Enter(_ tcell.Screen) (string, bool) {
 	if len(c.Msg) > 0 {
 		return c.Msg, true
 	}
 	return "", false
 }
 
-func (c *Chat) Delete() (int, int) {
+func (c *Chat) Delete(s tcell.Screen) {
 	dim := len(c.Msg) - 1
 	if dim > 0 {
 		c.Msg = c.Msg[:dim]
 		c.msgleft--
-		return c.msgleft, c.msgrow
+		s.SetContent(c.msgleft, c.msgrow, ' ', nil, c.style)
+		return
 	}
 	if dim == 0 {
 		c.Msg = ""
 		c.msgleft--
-		return c.msgleft, c.msgrow
+		s.SetContent(c.msgleft, c.msgrow, ' ', nil, c.style)
+		return
 	}
-	return -1, -1
 }
 
 func (c *Chat) WriteMessage(s tcell.Screen, m string) {
