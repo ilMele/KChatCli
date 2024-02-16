@@ -1,6 +1,7 @@
 # KChatCli
 
-I'm new in socket / network programming so i tried to create a simple chat that uses UDP hole punching.
+One of the first attempts to program a messaging app.
+I tried to create a simple chat that uses UDP hole punching.
 
 ## client
 
